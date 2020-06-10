@@ -10,14 +10,17 @@ script:
   - docker run -e CI=true bl00na/docker-compose-complex-app-client-test npm test
 
 after_success:
-  - docker build -t bl00na/docker-compose-complex-app-client ./client
-  - docker build -t bl00na/docker-compose-complex-app-nginx ./nginx
-  - docker build -t bl00na/docker-compose-complex-app-api ./api
-  - docker build -t bl00na/docker-compose-complex-app-worker ./worker
+  # Be aware that you must use your docker hub username in the image tag
+  # in the format <docker hub username>/<image-tag-name>
+  # in order to successfully upload it to docker hub in the next step!
+  - docker build -t mhumpert/docker-compose-complex-app-client ./client
+  - docker build -t mhumpert/docker-compose-complex-app-nginx ./nginx
+  - docker build -t mhumpert/docker-compose-complex-app-api ./api
+  - docker build -t mhumpert/docker-compose-complex-app-worker ./worker
   # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take those images and push them to docker hub
-  - docker push mhumpert/docker-compose-complex-app-client
-  - docker push mhumpert/docker-compose-complex-app-nginx
-  - docker push mhumpert/docker-compose-complex-app-api
-  - docker push mhumpert/docker-compose-complex-app-worker
+  - docker push mhumpert/repository:docker-compose-complex-app-client
+  - docker push mhumpert/repository:docker-compose-complex-app-nginx
+  - docker push mhumpert/repository:docker-compose-complex-app-api
+  - docker push mhumpert/repository:docker-compose-complex-app-worker
