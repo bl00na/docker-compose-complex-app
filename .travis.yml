@@ -1,0 +1,23 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+  before_install:
+    - docker build -t bl00na/docker-compose-complex-app-client-test -f ./client/Dockerfile.dev ./client
+
+    script:
+      - docker run -e CI=true bl00na/docker-compose-complex-app-client-test npm test
+
+after_success:
+  - docker build -t bl00na/docker-compose-complex-app-client ./client
+  - docker build -t bl00na/docker-compose-complex-app-nginx ./nginx
+  - docker build -t bl00na/docker-compose-complex-app-api ./api
+  - docker build -t bl00na/docker-compose-complex-app-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push bl00na/docker-compose-complex-app-client
+  - docker push bl00na/docker-compose-complex-app-nginx
+  - docker push bl00na/docker-compose-complex-app-api
+  - docker push bl00na/docker-compose-complex-app-worker
